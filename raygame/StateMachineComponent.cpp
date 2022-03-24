@@ -2,11 +2,15 @@
 #include "Actor.h"
 #include "SeekComponent.h"
 #include "WanderComponent.h"
+#include "FleeComponent.h"
 #include "Transform2D.h"
 
 void StateMachineComponent::start()
 {
 	Component::start();
+
+	m_fleeComponent = getOwner()->getComponent<FleeComponent>();
+	m_fleeForce = m_fleeComponent->getSteeringForce();
 
 	m_seekComponent = getOwner()->getComponent<SeekComponent>();
 	m_seekForce = m_seekComponent->getSteeringForce();
@@ -14,7 +18,7 @@ void StateMachineComponent::start()
 	m_wanderComponent = getOwner()->getComponent<WanderComponent>();
 	m_wanderForce = m_wanderComponent->getSteeringForce();
 
-	m_currentState = IDLE;
+	m_currentState = WANDER;
 }
 
 void StateMachineComponent::update(float deltaTime)
@@ -29,23 +33,36 @@ void StateMachineComponent::update(float deltaTime)
 
 	switch (m_currentState)
 	{
-	case IDLE:
+	case FLEE:
+		m_fleeComponent->setSteeringForce(m_fleeForce);
 		m_seekComponent->setSteeringForce(0);
 		m_wanderComponent->setSteeringForce(0);
 
-		if (targetInRange)
-			setCurrentState(SEEK);
+		if (!targetInRange)
+			setCurrentState(WANDER);
 
 		break;
 	case WANDER:
+		m_fleeComponent->setSteeringForce(0);
 		m_seekComponent->setSteeringForce(0);
 		m_wanderComponent->setSteeringForce(m_wanderForce);
 
+		//If target is in range...
 		if (targetInRange)
-			setCurrentState(SEEK);
-
+		{
+			//If agent attached to this state machine is agent 1...
+			if (getOwner()->getName() == "Agent1")
+				//Set current state to seek
+				setCurrentState(SEEK);
+			//If agent attached to this state machine is agent 2...
+			else if (getOwner()->getName() == "Agent2")
+				//Set current state to flee
+				setCurrentState(FLEE);
+		}
+		
 		break;
 	case SEEK:
+		m_fleeComponent->setSteeringForce(0);
 		m_seekComponent->setSteeringForce(m_seekForce);
 		m_wanderComponent->setSteeringForce(0);
 

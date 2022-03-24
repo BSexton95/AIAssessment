@@ -23,7 +23,8 @@ public:
 		MUD,
 		PLAYER,
 		GHOST,
-		AGENT
+		AGENTSEEKING,
+		AGENTFLEEING
 	};
 
 	/// <summary>

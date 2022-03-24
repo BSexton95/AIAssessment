@@ -3,13 +3,14 @@
 
 enum State
 {
-	IDLE,
+	FLEE,
 	WANDER,
 	SEEK
 };
 
 class SeekComponent;
 class WanderComponent;
+class FleeComponent;
 
 class StateMachineComponent :
 	public Component
@@ -26,8 +27,11 @@ private:
 	State m_currentState;
 	SeekComponent* m_seekComponent;
 	WanderComponent* m_wanderComponent;
+	FleeComponent* m_fleeComponent;
 	float m_seekForce;
 	float m_wanderForce;
+	float m_fleeForce;
 	float m_seekRange = 300;
+	float m_fleeRange = 300;
 };
 

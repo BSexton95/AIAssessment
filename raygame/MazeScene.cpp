@@ -6,16 +6,17 @@
 #include "SpriteComponent.h"
 #include "WanderComponent.h"
 #include "SeekComponent.h"
+#include "FleeComponent.h"
 #include "Agent.h"
 #include "StateMachineComponent.h"
-#include "AgentSeeking.h"
 
 Maze::TileKey _ = Maze::TileKey::OPEN;
 Maze::TileKey w = Maze::TileKey::WALL;
 Maze::TileKey s = Maze::TileKey::MUD;
 Maze::TileKey p = Maze::TileKey::PLAYER;
 Maze::TileKey g = Maze::TileKey::GHOST;
-Maze::TileKey a = Maze::TileKey::AGENT;
+Maze::TileKey a1 = Maze::TileKey::AGENTSEEKING;
+Maze::TileKey a2 = Maze::TileKey::AGENTFLEEING;
 
 Maze::Maze()
 {
@@ -26,33 +27,33 @@ Maze::Maze()
 	TileKey map[Maze::HEIGHT][Maze::WIDTH] = {
 		{ w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w },
 		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, g, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, w, _, w, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, w, _, w, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, w, g, w, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, w, w, w, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, a2, _, _, w, w, w, w, _, _, _, _, _, _, w, w, w, w, _, _, _, _, a1, _, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, _, _, w, w, _, _, _, _, w, w, w, w, w, _, _, _, _, w, w, _, _, _, _, _, w },
+		{ w, _, _, _, _, w, w, _, _, _, _, w, w, w, w, w, _, _, _, _, w, w, _, _, _, _, _, w },
+		{ w, _, _, _, _, w, w, _, _, _, _, _, _, _, _, _, _, _, _, _, w, w, _, _, _, _, _, w },
+		{ w, _, _, _, _, w, w, _, _, _, _, _, _, _, _, _, _, _, _, _, w, w, _, _, _, _, _, w },
+		{ w, _, _, _, _, w, w, _, _, _, _, w, w, w, w, w, _, _, _, _, w, w, _, _, _, _, _, w },
+		{ w, _, _, _, _, w, w, _, _, _, _, w, w, w, w, w, _, _, _, _, w, w, _, _, _, _, _, w },
 		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
 		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
 		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
 		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
 		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, w, w, w, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, w, p, w, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, w, _, w, _, _, _, _, _, _, _, _, w, w, w, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w, w, w, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w, w, w, _, w },
 		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, a, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, w, w, w, w, w, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, w, w, w, w, w, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, w, w, w, w, w, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, w, w, w, w, w, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, p, _, w },
 		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
 		{ w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w },
 	};
@@ -118,29 +119,85 @@ Maze::Tile Maze::createTile(int x, int y, TileKey key)
 		tile.actor = m_player;
 		addActor(tile.actor);
 		break;
-	case TileKey::GHOST:
+	case TileKey::GHOST: {
 		tile.cost = 1.0f;
 		Ghost* ghost = new Ghost(position.x, position.y, 100, 300, 0xFF6666FF, this);
 		ghost->setTarget(m_player);
 		tile.actor = ghost;
 		addActor(tile.actor);
+	}
 		break;
-	case TileKey::AGENT:
+	case TileKey::AGENTSEEKING: {
+		//Tile cost is set to 1
 		tile.cost = 1.0f;
-		AgentSeeking* agent1 = new AgentSeeking(position.x, position.y, 100, 200, m_player);
-		
-		/*m_agentSeeking->getTransform()->setScale({ 50, 50 });
-		m_agentSeeking->addComponent(new SpriteComponent("Images/enemy.png"));*/
+		//Create a new agent
+		Agent* agent1 = new Agent(position.x, position.y, "Agent1", 10, 100);
 
-		/*WanderComponent* wanderComponent = new WanderComponent(1000, 100, 100);
+		//Add a sprite component to the new agent
+		agent1->addComponent(new SpriteComponent("Images/enemy.png"));
+		//Set the agents scale
+		agent1->getTransform()->setScale({ 25, 25 });
+
+		//Add a wander component to the new agent
+		WanderComponent* wanderComponent = new WanderComponent(1000, 20, 200);
 		agent1->addComponent(wanderComponent);
 
+		//Add a seek component to the new agent
 		SeekComponent* seekComponent = new SeekComponent();
+		//Set the steering force for the seek component to be 50 and set the target to be the player
 		seekComponent->setSteeringForce(50);
+		seekComponent->setTarget(m_player);
 		agent1->addComponent(seekComponent);
-		agent1->addComponent<StateMachineComponent>();*/
+
+
+		//Add a flee component to the agent
+		FleeComponent* fleeComponent = new FleeComponent();
+		fleeComponent->setSteeringForce(0);
+		fleeComponent->setTarget(m_player);
+		agent1->addComponent(fleeComponent);
+
+		//Add the state machine component to the new agent
+		agent1->addComponent<StateMachineComponent>();
+
+		//Add the agent to the scene
 		tile.actor = agent1;
-		addActor(tile.actor);
+		addActor(agent1); 
+	}
+		break;
+	case TileKey::AGENTFLEEING: {
+		//Set cost of tile to 1
+		tile.cost = 1.0f;
+		//Create a new agent
+		Agent* agent2 = new Agent(position.x, position.y, "Agent2", 100, 100);
+
+		//Add a sprite component to the new agent
+		agent2->addComponent(new SpriteComponent("Images/enemy.png"));
+		//Set the agents scale
+		agent2->getTransform()->setScale({ 25, 25 });
+
+		//Add a wander component to the new agent
+		WanderComponent* wanderComponent = new WanderComponent(1000, 20, 200);
+		agent2->addComponent(wanderComponent);
+
+		//Add a flee component to the agent
+		FleeComponent* fleeComponent = new FleeComponent();
+		fleeComponent->setSteeringForce(50);
+		fleeComponent->setTarget(m_player);
+		agent2->addComponent(fleeComponent);
+
+		//Add a seek component to the new agent
+		SeekComponent* seekComponent = new SeekComponent();
+		//Set the steering force for the seek component to be 50 and set the target to be the player
+		seekComponent->setSteeringForce(0);
+		seekComponent->setTarget(m_player);
+		agent2->addComponent(seekComponent);
+
+		//Add the state machine component to the new agent
+		agent2->addComponent<StateMachineComponent>();
+
+		tile.actor = agent2;
+		addActor(agent2);
+	}
 		break;
 	}
 	return tile;

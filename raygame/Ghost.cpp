@@ -52,6 +52,13 @@ void Ghost::onCollision(Actor* other)
 
 		getMoveComponent()->setVelocity({ 0, 0 });
 	}
+
+	//If Ghost collides with the player...
+	if (other->getName() == "Player")
+	{
+		//...Player respawns 
+		other->getTransform()->setWorldPostion({ 350, 700 });
+	}
 }
 
 void Ghost::setTarget(Actor* target)

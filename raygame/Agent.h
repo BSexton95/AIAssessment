@@ -14,6 +14,14 @@ public:
 	void start() override;
 	void fixedUpdate(float deltaTime) override;
 	void onAddComponent(Component* component) override;
+
+	/// <summary>
+	/// When agent collides with a wall it will not pass through
+	/// When agent collides with the player the player will respawn
+	/// </summary>
+	/// <param name="other"></param>
+	void onCollision(Actor* other) override;
+
 	float getMaxForce() { return m_maxForce; }
 	void setMaxForce(float maxForce) { m_maxForce = maxForce; }
 	MoveComponent* getMoveComponent() { return m_moveComponent; }
