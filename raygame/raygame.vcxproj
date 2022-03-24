@@ -149,6 +149,7 @@
     <ClCompile Include="AABBCollider.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Agent.cpp" />
+    <ClCompile Include="AgentSeeking.cpp" />
     <ClCompile Include="CircleCollider.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -174,6 +175,7 @@
   <ItemGroup>
     <ClInclude Include="AABBCollider.h" />
     <ClInclude Include="Actor.h" />
+    <ClInclude Include="AgentSeeking.h" />
     <ClInclude Include="DynamicArray.h" />
     <ClInclude Include="Agent.h" />
     <ClInclude Include="CircleCollider.h" />

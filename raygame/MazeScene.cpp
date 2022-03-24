@@ -3,12 +3,19 @@
 #include "Wall.h"
 #include "Ghost.h"
 #include "Transform2D.h"
+#include "SpriteComponent.h"
+#include "WanderComponent.h"
+#include "SeekComponent.h"
+#include "Agent.h"
+#include "StateMachineComponent.h"
+#include "AgentSeeking.h"
 
 Maze::TileKey _ = Maze::TileKey::OPEN;
 Maze::TileKey w = Maze::TileKey::WALL;
 Maze::TileKey s = Maze::TileKey::MUD;
 Maze::TileKey p = Maze::TileKey::PLAYER;
 Maze::TileKey g = Maze::TileKey::GHOST;
+Maze::TileKey a = Maze::TileKey::AGENT;
 
 Maze::Maze()
 {
@@ -26,7 +33,7 @@ Maze::Maze()
 		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
 		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
 		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
-		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
+		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, a, _, _, _, _, _, _, _, _, _, w },
 		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
 		{ w, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, w },
 		{ w, _, _, _, _, _, _, _, _, _, _, w, w, w, w, w, _, _, _, _, _, _, _, _, _, _, _, w },
@@ -116,6 +123,23 @@ Maze::Tile Maze::createTile(int x, int y, TileKey key)
 		Ghost* ghost = new Ghost(position.x, position.y, 100, 300, 0xFF6666FF, this);
 		ghost->setTarget(m_player);
 		tile.actor = ghost;
+		addActor(tile.actor);
+		break;
+	case TileKey::AGENT:
+		tile.cost = 1.0f;
+		AgentSeeking* agent1 = new AgentSeeking(position.x, position.y, 100, 200, m_player);
+		
+		/*m_agentSeeking->getTransform()->setScale({ 50, 50 });
+		m_agentSeeking->addComponent(new SpriteComponent("Images/enemy.png"));*/
+
+		/*WanderComponent* wanderComponent = new WanderComponent(1000, 100, 100);
+		agent1->addComponent(wanderComponent);
+
+		SeekComponent* seekComponent = new SeekComponent();
+		seekComponent->setSteeringForce(50);
+		agent1->addComponent(seekComponent);
+		agent1->addComponent<StateMachineComponent>();*/
+		tile.actor = agent1;
 		addActor(tile.actor);
 		break;
 	}
