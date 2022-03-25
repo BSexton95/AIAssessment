@@ -31,6 +31,9 @@ namespace NodeGraph
 
 	DynamicArray<Node*> findPath(Node* start, Node* end);
 
+	/// <summary>
+	/// Finds the distance between two points measured along axes at right angles.
+	/// </summary>
 	float getManhattanDistance(Node* start, Node* end);
 
 	void drawGraph(Node* start);
