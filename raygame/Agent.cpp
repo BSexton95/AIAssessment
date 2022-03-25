@@ -72,8 +72,11 @@ void Agent::onCollision(Actor* other)
 	//If agent collides with player...
 	if (other->getName() == "Player")
 	{
-		//...player respawns
-		other->getTransform()->setWorldPostion({ 350, 700 });
+		if (getName() == "Agent1")
+			//...player respawns
+			other->getTransform()->setWorldPostion({ 350, 700 });
+		else if (getName() == "Agent2")
+			Engine::CloseApplication();
 	}
 }
 
